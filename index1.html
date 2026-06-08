@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест из програмског језика Ц (Питања 41-70)</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #e9ecef;
+            --success: #28a745;
+            --danger: #dc3545;
+            --text: #333;
+            --bg: #f4f7f6;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 { color: var(--primary); }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, monospace;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-label:hover { background: #d3d9df; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover { background: #004494; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .feedback.correct {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .hidden { display: none; }
+        .mistake-card {
+            background: #fff3f3;
+            border-left: 5px solid var(--danger);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .progress {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- Апликација ће бити учитана овде путем JavaScript-а -->
+</div>
+
+<script>
+    // База питања
+    const questions = [    {
+        id: 41, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних позива декларисане функције:",
+        code: `void Umetni(char *a, char k);\n\n// У main функцији:\nchar s1[20], *s2, s3;`,
+        options: [
+            {id: 1, text: "Umetni(s2, s1[i]);"},
+            {id: 2, text: "Umetni(s2, s1);"},
+            {id: 3, text: "Umetni(s2, 'A');"},
+            {id: 4, text: "Umetni(s1, s3);"},
+            {id: 5, text: "Umetni(*s2, s3);"},
+            {id: 6, text: "Umetni(s3, &s1);"}
+        ],
+        correct: [1, 3, 4],
+        explanation: "Функција тражи (char*, char). s1 и s2 су показивачи на char (char*). s1[i], 'A', и s3 су карактери (char). Зато су валидни позиви где је први параметар s1 или s2, а други s1[i], 'A', или s3."
+    },
+    {
+        id: 42, type: "fill",
+        text: "За сваку променљиву одредити коју ће вредност имати по извршењу наредби (тастатурни унос је '12345 12345'):",
+        code: `int x, y;\nscanf("%3i%3i", &x, &y);`,
+        options: [
+            {label: "1. променљива x добија вредност x =", suffix: ""},
+            {label: "2. променљива y добија вредност y =", suffix: ""}
+        ],
+        correct: ["123", "45"],
+        explanation: "Формат %3i чита максимално 3 цифре за број. За x узима '123', остаје '45 12345' у баферу. Затим за y узима следеће 3 цифре (али наилази на размак после '45'), па узима само '45'."
+    },
+    {
+        id: 43, type: "fill",
+        text: "Израчунати вредност коју ће променљиве имати по извршењу следеће наредбe:",
+        code: `int a = 3, b = 15;\nb %= ++a;`,
+        options: [
+            {label: "a =", suffix: ""},
+            {label: "b =", suffix: ""}
+        ],
+        correct: ["4", "3"],
+        explanation: "Оператор ++a прво увећава a на 4. Затим се рачуна b %= 4, што је остатак при дељењу 15 са 4. 15 % 4 = 3."
+    },
+    {
+        id: 44, type: "fill",
+        text: "Одредити вредности које ће променљиве x и y имати по извршењу следећег кода:",
+        code: `int x = 10;\nint y = 20;\nif(x > 50)\n    x -= 10;\ny += 10;`,
+        options: [
+            {label: "x =", suffix: ""},
+            {label: "y =", suffix: ""}
+        ],
+        correct: ["10", "30"],
+        explanation: "Услов x > 50 није тачан (10 > 50 је нетачно). Зато се x -= 10 прескаче. Наредба y += 10 није у if блоку (јер нема витичастих заграда), па се увек извршава. y постаје 30."
+    },
+    {
+        id: 45, type: "fill",
+        text: "За дате вредности промељивe izbor, одреди вредност промељиве x по извршењу наредбе:",
+        code: `int x = 0, izbor;\nswitch(izbor)\n{\n    case 1: x += 1;\n    case 2: x += 2; break;\n    case 3: x += 3;\n    default: x = 100;\n    case 4: x += 4;\n    case 5: x += 5;\n}`,
+        options: [
+            {label: "1. за izbor=3, x =", suffix: ""},
+            {label: "2. за izbor=10, x =", suffix: ""},
+            {label: "3. за izbor=4, x =", suffix: ""},
+            {label: "4. за izbor=2, x =", suffix: ""}
+        ],
+        correct: ["109", "109", "9", "2"],
+        explanation: "Због недостатка 'break' наредби, код 'пропада' кроз случајеве (fall-through). izbor=3: x+=3 (x=3), default: x=100 (x=100), case 4: x+=4 (104), case 5: x+=5 (109)."
+    },
+    {
+        id: 46, type: "fill",
+        text: "Допунити изразима који недостају кôд петље која има задатак да дуплира све елементе ПОСЛЕДЊЕ колоне матрице:",
+        code: `int mat[10][20]; \nint x, N, M; // N=врсте, M=колоне\n\nfor(x = 0; x < _____; x++)\n    mat[_____][_____] *= 2;`,
+        options: [
+            {label: "for(x = 0; x <", suffix: "; x++)"},
+            {label: "mat[", suffix: "]"},
+            {label: "[", suffix: "] *= 2;"}
+        ],
+        correct: ["N", "x", "M-1"],
+        explanation: "Петља иде по врстама (од 0 до N). Индекс тренутне врсте је x. Последња колона има индекс M-1."
+    },
+    {
+        id: 47, type: "fill",
+        text: "Допуните петљу која сажимањем ИЗБАЦИ елеменат низа 'p' са позиције 'k'. У поља унесите РЕДНИ БРОЈ понуђеног израза:",
+        code: `// Понуђени изрази:\n// 1. p[i+1]   2. p[i-1]   3. p[i]   4. p[k]\n// 5. i++      6. i--      7. < n    8. < n-1\n\nfor(i = k; i _______; _______)\n    _______ = _______;\nn--;`,
+        options: [
+            {label: "i", suffix: "; (Услов)"},
+            {label: ";", suffix: ") (Корак)"},
+            {label: "Леви део доделе:", suffix: "="},
+            {label: "= Десни део доделе:", suffix: ";"}
+        ],
+        correct: ["8", "5", "3", "1"],
+        explanation: "Петља помера све елементе за једно место улево. Иде од 'k' до 'n-1' (израз 8). Увећава се са i++ (израз 5). Додела је p[i] (3) = p[i+1] (1)."
+    },
+    {
+        id: 48, type: "fill",
+        text: "Допунити изразима који недостају кôд петље која има задатак да дуплира све елементе ПРВЕ врсте матрице:",
+        code: `int mat[10][20]; \nint k, N, M; // N=врсте, M=колоне\n\nfor(k = 0; k < _____; k++)\n    mat[_____][_____] *= 2;`,
+        options: [
+            {label: "for(k = 0; k <", suffix: "; k++)"},
+            {label: "mat[", suffix: "]"},
+            {label: "[", suffix: "] *= 2;"}
+        ],
+        correct: ["M", "0", "k"],
+        explanation: "Петља иде кроз све колоне (од 0 до M). Индекс прве врсте је фиксан и износи 0. Индекс колоне се мења (k)."
+    },
+    {
+        id: 49, type: "fill",
+        text: "Одредити вредности датих израза. Ако израз изазива грешку, написати 'error':",
+        code: null,
+        options: [
+            {label: "1. 10 / 4. =", suffix: ""},
+            {label: "2. 10. / 5 =", suffix: ""},
+            {label: "3. -10 % 3 =", suffix: ""},
+            {label: "4. 10. % 5 =", suffix: ""},
+            {label: "5. 10 % (-3) =", suffix: ""},
+            {label: "6. (100/3) % 6 =", suffix: ""}
+        ],
+        correct: ["2.5", "2.0", "-1", "error", "1", "3"],
+        explanation: "Дељење са реалним бројем (4. и 10.) даје реалан резултат (2.5 и 2.0). Модуло (%) над реалним бројевима није дозвољен у Ц (error). Предзнак резултата модуло операције прати предзнак дељеника (левог броја)."
+    },
+    {
+        id: 50, type: "fill",
+        text: "Допуните петљу која циклично помера елементе низа 'p' за једно место УДЕСНО. Унесите РЕДНИ БРОЈ понуђеног израза:",
+        code: `// 1. p[0]   2. p[n-1]   3. p[n]   4. p[i+1]   5. p[i-1]\n// 6. p[i]   7. i++      8. i--    9. >=0      10. >0\n\npom = _______;\nfor(i = n-2; i _______; _______)\n    _______ = _______;\n_______ = pom;`,
+        options: [
+            {label: "pom =", suffix: ";"},
+            {label: "i", suffix: "; (Услов)"},
+            {label: ";", suffix: ") (Корак)"},
+            {label: "Леви део доделе:", suffix: "="},
+            {label: "= Десни део доделе:", suffix: ";"},
+            {label: "Последња наредба:", suffix: "= pom;"}
+        ],
+        correct: ["2", "9", "8", "4", "6", "1"],
+        explanation: "Чувамо последњи елемент: pom = p[n-1] (2). Идемо уназад од n-2 до >=0 (9), уз i-- (8). Померамо удесно: p[i+1] (4) = p[i] (6). На крају први постаје сачувани: p[0] (1) = pom."
+    },
+    {
+        id: 51, type: "fill",
+        text: "Допуните петљу која у низ УБАЦИ (инсертује) елеменат 'x' на позицију 'k'. Унесите РЕДНИ БРОЈ понуђеног израза:",
+        code: `// 1. p[i+1]   2. p[i-1]   3. p[i]   4. p[k]\n// 5. i++      6. i--      7. >= k   8. > k\n\nfor(i = n; i _______; _______)\n    _______ = _______;\n_______ = x;\nn++;`,
+        options: [
+            {label: "i", suffix: "; (Услов)"},
+            {label: ";", suffix: ") (Корак)"},
+            {label: "Леви део доделе:", suffix: "="},
+            {label: "= Десни део доделе:", suffix: ";"},
+            {label: "Предзадња наредба:", suffix: "= x;"}
+        ],
+        correct: ["8", "6", "3", "2", "4"],
+        explanation: "Померамо елементе у десно да направимо место. Идемо од краја (i=n) док је i > k (8), уз i-- (6). Копирамо p[i] (3) = p[i-1] (2). На крају уписујемо x у p[k] (4)."
+    },
+    {
+        id: 52, type: "fill",
+        text: "Формирати вектор вредности: 1, 2, 4, 7, 11, 16... (разлике су 1, 2, 3, 4...). Допунити изразе:",
+        code: `A[0] = 1;\nfor(i = _____; i _____; i++)\n    _____ = _____;`,
+        options: [
+            {label: "for(i =", suffix: ";"},
+            {label: "i", suffix: "; i++)"},
+            {label: "Леви део доделе:", suffix: "="},
+            {label: "= Десни део доделе:", suffix: ";"}
+        ],
+        correct: ["1", "< n", "A[i]", "A[i-1]+i"],
+        explanation: "Петља почиње од i=1 јер је A[0] већ задат. Иде до < n. Сваки следећи елемент A[i] је једнак претходном A[i-1] плус тренутни индекс i (нпр. A[1] = 1+1=2, A[2] = 2+2=4)."
+    },
+    {
+        id: 53, type: "fill",
+        text: "Одреди које ће вредности имати променљиве x, y и z после извршења следећег кода:",
+        code: `int x = 40, y = 50, z = 60, *p1, *p2;\np1 = &x;\np2 = p1;\ny = (*p2) + 20;\nz = *p2;`,
+        options: [
+            {label: "x =", suffix: ""},
+            {label: "y =", suffix: ""},
+            {label: "z =", suffix: ""}
+        ],
+        correct: ["40", "60", "40"],
+        explanation: "p1 и p2 показују на x (чија је вредност 40). y постаје вредност од x (40) + 20 = 60. z постаје вредност од x (40)."
+    },
+    {
+        id: 54, type: "fill",
+        text: "Анализирати код и одредити вредности променљивих х и y, као и показивача pa:",
+        code: `int a[7] = {10, 25, 30, 15, 40, 77, 45}, *pa, x, y;\npa = a + 4;\nx = --(*pa) + 5;\ny = *(--pa) + 5;`,
+        options: [
+            {label: "x =", suffix: ""},
+            {label: "y =", suffix: ""},
+            {label: "pa = a +", suffix: ""}
+        ],
+        correct: ["44", "20", "3"],
+        explanation: "pa показује на a[4] (40). --(*pa) смањује вредност у низу на 39. x = 39+5 = 44. Затим --pa помера показивач на a[3] (15). y = 15+5 = 20."
+    },
+    {
+        id: 55, type: "fill",
+        text: "Анализирати код и одредити вредности променљивих х и y, као и показивача pa:",
+        code: `int a[7] = {81, 12, 35, 97, 40, 52, 17}, *pa, x, y;\npa = a + 3;\nx = *(pa - 2) + 1;\ny = (*pa - 2) + 1;`,
+        options: [
+            {label: "x =", suffix: ""},
+            {label: "y =", suffix: ""},
+            {label: "pa = a +", suffix: ""}
+        ],
+        correct: ["13", "96", "3"],
+        explanation: "pa показује на a[3] (97). *(pa-2) узима вредност из a[1] (12), па је x = 12+1=13. (*pa-2) узима вредност из a[3] (97) и одузима 2 (95), па је y = 95+1=96. pa се није променио."
+    },
+    {
+        id: 56, type: "fill",
+        text: "Одредити које вредности имају променљиве a, b и c по изласку из функције:",
+        code: `void Transformisi(float *x, float *y, float z)\n{\n    z++;\n    *x = *x + z;\n    (*y)++;\n}\n// У main-у:\nfloat a = 10, b = 10, c = 10;\nTransformisi(&a, &b, c);`,
+        options: [
+            {label: "a =", suffix: ""},
+            {label: "b =", suffix: ""},
+            {label: "c =", suffix: ""}
+        ],
+        correct: ["21", "11", "10"],
+        explanation: "c је прослеђено по вредности, па остаје 10 у main-у. У функцији, локално z постаје 11. *x (што је a) постаје 10+11=21. *y (што је b) се увећава за 1 и постаје 11."
+    },
+    {
+        id: 57, type: "fill",
+        text: "Одредити садржај означених стрингова по извршењу наредби (приказати стрингове без наводника):",
+        code: `char s1[] = "Short Message Service", *s2, *s3;\ns2 = strchr(s1, 'M');\ns3 = strrchr(s2, 'S');\nstrncpy(s1 + 1, s2, 1);\nstrcpy(s1 + 2, s3);`,
+        options: [
+            {label: "s1 =", suffix: ""},
+            {label: "s2 =", suffix: ""},
+            {label: "s3 =", suffix: ""}
+        ],
+        correct: ["SMService", "ice", "Service"],
+        explanation: "s2 показује на 'M' (индекс 6). s3 показује на 'S' (индекс 14). strncpy мења s1[1] у 'M'. strcpy копира 'Service\\0' на почетак s1[2]. s1 постаје 'SMService\\0'. s2 је остао на индексу 6, што је сада 'i' у новом стрингу ('ice'). s3 је остао на индексу 14 где је још увек 'Service'."
+    },
+    {
+        id: 58, type: "fill",
+        text: "Повезати допунске параметре функције printf са њиховим значењем (Унесите одговарајући број 1-4):",
+        code: `1. (#)\n2. (0)\n3. (-)\n4. (+)`,
+        options: [
+            {label: "поравнавање уз леву ивицу:", suffix: ""},
+            {label: "испред позитивног броја иде плус:", suffix: ""},
+            {label: "допуњавање нулама:", suffix: ""},
+            {label: "децимална тачка код целих бројева:", suffix: ""}
+        ],
+        correct: ["3", "4", "2", "1"],
+        explanation: "(-) лево поравнање. (+) форсира знак. (0) попуњава нулама. (#) форсира испис децималне тачке код реалних бројева чак и ако нема децимала, или 0x код хексадекадних."
+    },
+    {
+        id: 59, type: "fill",
+        text: "Уписати РЕДНИ БРОЈ приказа (1-4) који се добија извршавањем дате наредбе:",
+        code: `float w = 123.456;\n\n// Прикази:\n// 1. 123.456000\n// 2. 1.234560e+002\n// 3. 123.456\n// 4. 123.46`,
+        options: [
+            {label: "printf(\"%g\", w) даје приказ број:", suffix: ""},
+            {label: "printf(\"%f\", w) даје приказ број:", suffix: ""},
+            {label: "printf(\"%.2f\", w) даје приказ број:", suffix: ""},
+            {label: "printf(\"%e\", w) даје приказ број:", suffix: ""}
+        ],
+        correct: ["3", "1", "4", "2"],
+        explanation: "%g аутоматски скраћује нула децимале. %f исписује подразумеваних 6 децимала. %.2f заокружује на 2 децимале. %e користи експоненцијални (научни) запис."
+    },
+    {
+        id: 60, type: "fill",
+        text: "Повезати математички израз са записом у Ц језику (Унесите редни број 1-4 за сваки израз):",
+        code: `// Изрази у Ц језику:\n1. y = sqrt(x+10) / (a+fabs(b))\n2. y = sqrt(x)+10 / a+fabs(b)\n3. y = sqrt(x+10) / a+fabs(b)\n4. y = (sqrt(x)+10) / (a+fabs(b))`,
+        options: [
+            {label: "y = ( √(x+10) ) / (a + |b|) одговара изразу број:", suffix: ""},
+            {label: "y = √x + (10/a) + |b| одговара изразу број:", suffix: ""},
+            {label: "y = ( √(x+10) / a ) + |b| одговара изразу број:", suffix: ""},
+            {label: "y = ( √x + 10 ) / (a + |b|) одговара изразу број:", suffix: ""}
+        ],
+        correct: ["1", "2", "3", "4"],
+        explanation: "Правилно коришћење заграда у Ц је кључно. Код дељења целих блокова (бројилац / именилац), цео именилац мора бити у загради ако садржи сабирање."
+    },
+    {
+        id: 61, type: "fill",
+        text: "Повезати вредност скретнице (c) са екранским приказом који производи (Унесите редни број приказа 1-6):",
+        code: `switch(c){\n    case 'A': case 'a': printf("Pravougaonik ");\n    case 'B': case 'b': printf("Trougao "); break;\n    case 'C': case 'c': printf("Krug ");\n    default: printf("Duz "); break;\n}\n\n// Прикази:\n// 1. Krug Duz   2. Pravougaonik Trougao Krug Duz\n// 3. Krug       4. Trougao\n// 5. Pravougaonik Trougao   6. Duz`,
+        options: [
+            {label: "За c = 'b' приказ је број:", suffix: ""},
+            {label: "За c = 'K' приказ је број:", suffix: ""},
+            {label: "За c = 'A' приказ је број:", suffix: ""},
+            {label: "За c = 'c' приказ је број:", suffix: ""}
+        ],
+        correct: ["4", "6", "5", "1"],
+        explanation: "Због недостатка 'break' наредби јавља се пропадање (fall-through). 'A' пропада у 'B' (приказ 5). 'c' пропада у default (приказ 1). 'K' иде право у default (приказ 6)."
+    },
+    {
+        id: 62, type: "fill",
+        text: "Повезати декларације са њиховим описом (Унесите редни број 1-5):",
+        code: `// Описи:\n1. Једнодимензионални низ показивача на целе бројеве\n2. Вектор целих бројева\n3. Показивач на цео број\n4. Цео број\n5. Грешка у декларацији`,
+        options: [
+            {label: "int *a;", suffix: ""},
+            {label: "int a[100];", suffix: ""},
+            {label: "int a*[100];", suffix: ""},
+            {label: "int *a[100];", suffix: ""}
+        ],
+        correct: ["3", "2", "5", "1"],
+        explanation: "int *a; је показивач. int a[100]; је низ. int a*[100]; је синтаксна грешка. int *a[100]; је низ од 100 показивача на инт."
+    },
+    {
+        id: 63, type: "fill",
+        text: "Повезати изразе са њиховим значењем (Унесите број 1-6):",
+        code: `// Значења:\n// 1. вредност елемента на последњој позицији\n// 2. адреса 4. елемента\n// 3. адреса почетног елемента\n// 4. вредност елемента на предзадњој позицији\n// 5. вредност елемента на почетној позицији\n// 6. адреса 5. елемента`,
+        options: [
+            {label: "&a[0];", suffix: ""},
+            {label: "*(a+n-1);", suffix: ""},
+            {label: "a+4;", suffix: ""},
+            {label: "*a;", suffix: ""}
+        ],
+        correct: ["3", "1", "6", "5"],
+        explanation: "&a[0] је адреса првог. *(a+n-1) дереференцира последњи. a+4 је адреса a[4] (што је 5. елемент). *a дереференцира почетак (вредност првог)."
+    },
+    {
+        id: 64, type: "fill",
+        text: "Повезати ознаке елемената матрице mat[n][n] са њиховим тумачењем (Унеси број 1-6):",
+        code: `// 1. елеменат у j-тој врсти и последњој колони\n// 2. i-та врста матрице\n// 3. j-та врста матрице\n// 4. j-та колона матрице\n// 5. елеменат у првој врсти и j-тој колони\n// 6. грешка у нотацији`,
+        options: [
+            {label: "mat[j][n-1]", suffix: ""},
+            {label: "mat[j]", suffix: ""},
+            {label: "mat[0][j]", suffix: ""},
+            {label: "mat[i]", suffix: ""}
+        ],
+        correct: ["1", "3", "5", "2"],
+        explanation: "Двоструки индекси дају елемент. Једноструки индекс код матрице (mat[j]) даје показивач на целу ту врсту."
+    },
+    {
+        id: 65, type: "fill",
+        text: "Повезати наредбе позиционирања у датотеци са описима ефеката (Унеси број 1-4):",
+        code: `// 1. позиционирање на почетак датотеке\n// 2. позиционирање на крај датотеке\n// 3. одређује позицију (број бајтова од почетка)\n// 4. ништа од понуђеног`,
+        options: [
+            {label: "ftell(dat)", suffix: ""},
+            {label: "fseek(dat, 0, SEEK_END)", suffix: ""},
+            {label: "fseek(dat, 0, SEEK_SET)", suffix: ""},
+            {label: "rewind(dat)", suffix: ""}
+        ],
+        correct: ["3", "2", "1", "1"],
+        explanation: "ftell враћа тренутну позицију. SEEK_END иде на крај. SEEK_SET (са офсетом 0) иде на почетак. rewind ради потпуно исту ствар као fseek(SEEK_SET) уз чишћење грешака."
+    },
+    {
+        id: 66, type: "fill",
+        text: "Повежите типове података са одговарајућом конверзијом (Унеси број 1-8):",
+        code: `// Конверзије:\n// 1. %d    2. %i    3. %s    4. %ld\n// 5. %f    6. %e    7. %hd   8. %u`,
+        options: [
+            {label: "short", suffix: ""},
+            {label: "signed int (u dekadnom obliku)", suffix: ""},
+            {label: "long", suffix: ""},
+            {label: "unsigned", suffix: ""},
+            {label: "signed int (dekadni, heksa ili oktalni)", suffix: ""}
+        ],
+        correct: ["7", "1", "4", "8", "2"],
+        explanation: "%hd се користи за short, %d искључиво за декадни int, %ld за long, %u за unsigned int, а %i може да парсира/прикаже int и у другим бројним системима."
+    },
+    {
+        id: 67, type: "fill",
+        text: "Повежите описе функција са њиховим називима (Унеси број 1-5):",
+        code: `// Функције:\n// 1. fscanf    2. fgets    3. fputs\n// 4. fprintf   5. fgetc`,
+        options: [
+            {label: "учитавање карактера из датотеке", suffix: ""},
+            {label: "учитавање реда из датотеке", suffix: ""},
+            {label: "форматирани упис података", suffix: ""},
+            {label: "упис стринга у датотеку", suffix: ""},
+            {label: "форматирано учитавање података", suffix: ""}
+        ],
+        correct: ["5", "2", "4", "3", "1"],
+        explanation: "fgetc (char), fgets (string/red), fprintf (formated print), fputs (put string), fscanf (formated scan)."
+    },
+    {
+        id: 68, type: "fill",
+        text: "Повежите описе са одговарајућим escape секвенцама (Унеси број 1-6):",
+        code: `// Секвенце:\n// 1. \\n    2. \\t    3. \\r\n// 4. \\b    5. \\h    6. \\a`,
+        options: [
+            {label: "враћање на почетак реда (carriage return)", suffix: ""},
+            {label: "системски звучник (bell)", suffix: ""},
+            {label: "прелаз у нови ред (new line)", suffix: ""},
+            {label: "није escape секвенца", suffix: ""},
+            {label: "хоризонтални табулатор", suffix: ""},
+            {label: "враћање једну позицију назад (backspace)", suffix: ""}
+        ],
+        correct: ["3", "6", "1", "5", "2", "4"],
+        explanation: "\\r је carriage return. \\a је alert (bell). \\h не постоји у стандардном Ц. \\t је tab. \\b је backspace."
+    },
+    {
+        id: 69, type: "fill",
+        text: "Повежите описе са одговарајућим ctype.h функцијама (Унеси број 1-8):",
+        code: `// Описи:\n// 1. штампајући знак?   2. велико слово?\n// 3. знак интерпункције? 4. управљачки знак?\n// 5. децимална цифра?    6. бели знак?\n// 7. слово?             8. хексадецимална цифра?`,
+        options: [
+            {label: "isspace(c)", suffix: ""},
+            {label: "isdigit(c)", suffix: ""},
+            {label: "isalpha(c)", suffix: ""},
+            {label: "isupper(c)", suffix: ""},
+            {label: "iscntrl(c)", suffix: ""},
+            {label: "isprint(c)", suffix: ""}
+        ],
+        correct: ["6", "5", "7", "2", "4", "1"],
+        explanation: "isspace (beli znak), isdigit (cifra), isalpha (slovo), isupper (veliko slovo), iscntrl (kontrolni/upravljacki znak), isprint (stampajuci znak)."
+    },
+    {
+        id: 70, type: "fill",
+        text: "Унеси број понуђене вредности стринга (1-6) која се добија извршењем израза:",
+        code: `char s1[] = "Iwnt2CmyM8sagain", *sn;\n\n// Понуђене вредности:\n// 1. NULL       2. "in"     3. "ain"\n// 4. "gain"     5. "sagain" 6. "myM8sagain"`,
+        options: [
+            {label: "sn = strrchr(s1,'a') - 1;", suffix: ""},
+            {label: "sn = strchr(s1,'a') + 1;", suffix: ""},
+            {label: "sn = strstr(s1,\"my\");", suffix: ""},
+            {label: "sn = strstr(s1,\"T2\");", suffix: ""}
+        ],
+        correct: ["5", "4", "6", "1"],
+        explanation: "strrchr тражи последње 'a' (у 'again'). -1 показивач враћа на слово 's'. strchr тражи прво 'a' (у 'again'). +1 помера на 'g'. strstr тражи подстринг. 'T2' не постоји јер је Ц case-sensitive ('t2' је у стрингу), па враћа NULL."
+    }];
+    let currentQuestionIndex = 0;
+    let mistakes = [];
+
+    // Елементи
+    const app = document.getElementById('app');
+        function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+}
+    function init() {
+        // Учитавање претходних грешака ако постоје
+        const savedMistakes = localStorage.getItem('c_quiz_mistakes');
+        if (savedMistakes) {
+            mistakes = JSON.parse(savedMistakes);
+        }
+        
+        // Учитавање тренутног питања
+        const savedIndex = localStorage.getItem('c_quiz_current_index');
+        if (savedIndex !== null) {
+            currentQuestionIndex = parseInt(savedIndex, 10);
+        }
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestionIndex];
+        const isMulti = q.type === "multi";
+
+        let html = `
+            <div class="progress">Питање ${currentQuestionIndex + 1} од ${questions.length}</div>
+            <h2>${escapeHTML(q.text)}</h2>
+${q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : ''}
+            <div class="options">
+        `;
+
+                if (q.type === "fill") {
+            q.options.forEach((opt, idx) => {
+                html += `
+                    <div style="margin-bottom: 10px;">
+                        <label>${escapeHTML(opt.label)} 
+                            <input type="text" id="fill_${idx}" style="width: 150px; padding: 5px; font-weight: bold;">
+                            ${opt.suffix ? escapeHTML(opt.suffix) : ''}
+                        </label>
+                    </div>
+                `;
+            });
+        } else {
+            q.options.forEach(opt => {
+                html += `
+                    <label class="option-label">
+                        <input type="${isMulti ? 'checkbox' : 'radio'}" name="answer" value="${opt.id}">
+                        ${escapeHTML(opt.text)}
+                    </label>
+                `;
+            });
+        }
+
+        html += `
+            </div>
+            <button id="submitBtn" onclick="checkAnswer()">Потврди одговор</button>
+            <div id="feedbackBox" class="feedback"></div>
+            <button id="nextBtn" class="hidden" onclick="nextQuestion()">Следеће питање</button>
+        `;
+
+        app.innerHTML = html;
+    }
+
+        function checkAnswer() {
+        const q = questions[currentQuestionIndex];
+        let isCorrect = false;
+
+        // Ако је питање на попуњавање текстуалних поља
+        if (q.type === "fill") {
+            let allFilled = true;
+            isCorrect = true; // Претпостављамо да је тачно док не нађемо грешку
+
+            q.options.forEach((opt, idx) => {
+                let inputEl = document.getElementById(`fill_${idx}`);
+                let val = inputEl.value.trim();
+                
+                if (val === "") {
+                    allFilled = false;
+                }
+                
+                // Проверавамо тачност (игноришемо све размаке и велика/мала слова)
+                let cleanVal = val.replace(/\s+/g, '').toLowerCase();
+                let cleanCorrect = String(q.correct[idx]).replace(/\s+/g, '').toLowerCase();
+                
+                if (cleanVal !== cleanCorrect) {
+                    isCorrect = false;
+                }
+            });
+
+            if (!allFilled) {
+                alert('Молимо вас попуните сва поља.');
+                return;
+            }
+
+            // Онемогући унос текста
+            document.querySelectorAll('input[type="text"]').forEach(i => i.disabled = true);
+
+        } else {
+            // Ако је питање на заокруживање (радио дугмићи или чекбокси)
+            const selected = Array.from(document.querySelectorAll('input[name="answer"]:checked'))
+                                  .map(cb => parseInt(cb.value))
+                                  .sort((a, b) => a - b);
+
+            if (selected.length === 0) {
+                alert('Молимо вас изаберите одговор.');
+                return;
+            }
+
+            const sortedCorrect = [...q.correct].sort((a, b) => a - b);
+            isCorrect = arraysEqual(selected, sortedCorrect);
+
+            // Онемогући радио/чекбокс инпуте
+            document.querySelectorAll('input[name="answer"]').forEach(i => i.disabled = true);
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const feedbackBox = document.getElementById('feedbackBox');
+        
+        // Онемогући дугме за слање
+        submitBtn.disabled = true;
+
+        if (isCorrect) {
+            feedbackBox.className = 'feedback correct';
+            feedbackBox.innerHTML = `<strong>Тачно!</strong> ${escapeHTML(q.explanation)}`;
+        } else {
+            feedbackBox.className = 'feedback incorrect';
+            
+            // За питања са уносом текста исписујемо очекиване одговоре ради лакшег учења
+            let extraInfo = "";
+            if (q.type === "fill") {
+                extraInfo = `<br><br><strong>Очекивани одговори су били:</strong> ${q.correct.join(', ')}`;
+            }
+            
+            feedbackBox.innerHTML = `<strong>Нетачно!</strong> ${escapeHTML(q.explanation)}${extraInfo}`;
+            
+            // Забележи грешку
+            mistakes.push({
+                questionNumber: currentQuestionIndex + 1,
+                text: q.text,
+                explanation: q.explanation
+            });
+            localStorage.setItem('c_quiz_mistakes', JSON.stringify(mistakes));
+        }
+
+        nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            localStorage.setItem('c_quiz_current_index', currentQuestionIndex); // Чувамо тренутно питање
+            renderQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        let html = `<h2>Резултати теста</h2>`;
+        
+        if (mistakes.length === 0) {
+            html += `<p style="color: green; font-weight:bold;">Свака част! Немате ниједну грешку!</p>`;
+        } else {
+            html += `<p>Направили сте грешке у следећим задацима. Проучите објашњења како бисте утврдили градиво:</p>`;
+            
+            mistakes.forEach(m => {
+                html += `
+                    <div class="mistake-card">
+                        <strong>Питање ${m.questionNumber}:</strong> ${escapeHTML(m.text)}
+                        <div style="margin-top: 10px; color: #555;"><strong>Објашњење:</strong> ${escapeHTML(m.explanation)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        html += `<button onclick="restartTest()">Покушај поново (Брише историју грешака)</button>`;
+        app.innerHTML = html;
+    }
+
+    function restartTest() {
+        localStorage.removeItem('c_quiz_mistakes');
+        localStorage.removeItem('c_quiz_current_index'); // Бришемо запамћено питање
+        mistakes = [];
+        currentQuestionIndex = 41;
+        init();
+    }
+
+    function arraysEqual(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+
+    // Покрени апликацију
+    init();
+
+</script>
+
+</body>
+</html>

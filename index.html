@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест из програмског језика Ц (Питања 1-40)</title>
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #e9ecef;
+            --success: #28a745;
+            --danger: #dc3545;
+            --text: #333;
+            --bg: #f4f7f6;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 { color: var(--primary); }
+        pre {
+            background: #272822;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, monospace;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: var(--secondary);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-label:hover { background: #d3d9df; }
+        .option-label input { margin-right: 15px; transform: scale(1.2); }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover { background: #004494; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .feedback.correct {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .hidden { display: none; }
+        .mistake-card {
+            background: #fff3f3;
+            border-left: 5px solid var(--danger);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .progress {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <!-- Апликација ће бити учитана овде путем JavaScript-а -->
+</div>
+
+<script>
+    // База питања
+    const questions = [
+    {
+        id: 1, type: "single",
+        text: "Заокружити број испред кључне речи којом се при кодирању у програмском језику Ц, у наредби вишестуког гранања обележавају вредности за које се улази у поједине гране:",
+        code: null,
+        options: [
+            {id: 1, text: "switch"},
+            {id: 2, text: "break"},
+            {id: 3, text: "return"},
+            {id: 4, text: "case"}
+        ],
+        correct: [4],
+        explanation: "Кључна реч 'case' се користи за обележавање конкретних грана унутар 'switch' наредбе."
+    },
+    {
+        id: 2, type: "single",
+        text: "У програмском језику Ц декларисане су променљивe и дат је део кода програма. Одредити шта је последица извршавања датог кода:",
+        code: `FILE *fp;\nchar str[150];\nfp = fopen("primer.txt", "r");\nfgets(str, 80, fp);`,
+        options: [
+            {id: 1, text: "Учитава 80 карактера из датотеке и смешта у стринг str."},
+            {id: 2, text: "Учитава максимално 150 карактера из датотеке и смешта у стринг str"},
+            {id: 3, text: "Учитава стринг из датотеке све док се не учита знак за нови ред или 80 карактера"},
+            {id: 4, text: "Учитава стринг из датотеке све док се не учита знак за нови ред или 150 карактера"}
+        ],
+        correct: [3],
+        explanation: "Функција fgets учитава карактере све док не наиђе на знак за нови ред (\\n) или док не учита n-1 карактера (овде 79 карактера, како би остало места за терминирајући знак '\\0')."
+    },
+    {
+        id: 3, type: "single",
+        text: "Употрeбом функције fprintf(...) уписати декларисан податак (int pod) у стандардну излазну датотеку. Заокружити број испред исправно написане наредбе:",
+        code: null,
+        options: [
+            {id: 1, text: "fprintf(pod);"},
+            {id: 2, text: "fprintf(\"%d\", pod);"},
+            {id: 3, text: "fprintf(\"%d\", pod, stdin);"},
+            {id: 4, text: "fprintf(stdout, \"%d\", pod);"}
+        ],
+        correct: [4],
+        explanation: "fprintf захтева показивач на датотеку као први аргумент. 'stdout' је стандардна излазна датотека."
+    },
+    {
+        id: 4, type: "single",
+        text: "Заокружити број испред исправно написане наредбе декларације и иницијализације променљиве x типа Lopta, тако да јој центар буде у тачки О(2,2,2), а полупречник 10цм:",
+        code: `typedef struct\n{\n    float x, y, z;\n} Tacka3D;\n\ntypedef struct\n{\n    Tacka3D centar;\n    float R;\n} Lopta;`,
+        options: [
+            {id: 1, text: "Lopta x = {10, {2, 2, 2}};"},
+            {id: 2, text: "Lopta x = {2, 2, 2, 10};"},
+            {id: 3, text: "Lopta x = {2, 2, 2}, {10};"},
+            {id: 4, text: "Lopta x = {{2, 2, 2}, 10};"}
+        ],
+        correct: [4],
+        explanation: "Lopta се састоји прво од структуре Tacka3D (за коју требају витичасте заграде {2, 2, 2}), а затим следи float R (10)."
+    },
+    {
+        id: 5, type: "single",
+        text: "Заокружити редни број испред наредбе која омогућава учитавање три бајта са тренутне позиције из бинарне датотеке:",
+        code: null,
+        options: [
+            {id: 1, text: "fread(podatak, 24, 1, fp);"},
+            {id: 2, text: "fread(&podatak, 24, 0, fp);"},
+            {id: 3, text: "fread(&podatak, 3, 1, fp);"},
+            {id: 4, text: "fscanf(&podatak, 3, 1, fp);"},
+            {id: 5, text: "fscanf(fp, 3, &podatak);"}
+        ],
+        correct: [3],
+        explanation: "fread захтева адресу одредишта (&podatak), величину блока у бајтовима (3), број блокова (1) и показивач на фајл (fp)."
+    },
+    {
+        id: 6, type: "single",
+        text: "Заокружити редни број испред наредбе која омогућава упис три бајта у бинарну датотеку:",
+        code: null,
+        options: [
+            {id: 1, text: "fprintf(&podatak, 3, 1, fp);"},
+            {id: 2, text: "fprintf(fp, 3, &podatak);"},
+            {id: 3, text: "fwrite(podatak, 24, 1, fp);"},
+            {id: 4, text: "fwrite(&podatak, 24, 0, fp);"},
+            {id: 5, text: "fwrite(&podatak, 3, 1, fp);"}
+        ],
+        correct: [5],
+        explanation: "fwrite има исту синтаксу параметара као fread: (адреса_податка, величина_у_бајтовима, број_блокова, показивач_на_фајл)."
+    },
+    {
+        id: 7, type: "single",
+        text: "Након извршења ових наредби на екрану ће се приказати вредности променљивих у задатом формату. Заокружити број испред тачног одговора:",
+        code: `float x = 5.56;\nprintf(" x = %f\\tx = %g\\n", x, x);`,
+        options: [
+            {id: 1, text: "x = 5.560000e+000  x= 0"},
+            {id: 2, text: "x = 5.560000       x = 5.560000e+000"},
+            {id: 3, text: "x = 5.560000       x = 5.56"},
+            {id: 4, text: "x = 5.56           x = 5.560000e+000"}
+        ],
+        correct: [3],
+        explanation: "%f исписује број са 6 децимала (5.560000), док %g исписује број без непотребних нула на крају (5.56)."
+    },
+    {
+        id: 8, type: "single",
+        text: "Имајући у виду приоритет оператора, одредити вредност променљиве x после извршења ове наредбе:",
+        code: `int x;\nx = 1 == 10 > 5;`,
+        options: [
+            {id: 1, text: "променљива добија вредност логичке неистине, тј. x = 0"},
+            {id: 2, text: "променљива добија вредност логичке истине, тј. x = 1"},
+            {id: 3, text: "вредност логичког израза се не може доделити целобројној променљивој"},
+            {id: 4, text: "променљива добија вредност логичке истине, тј. било који број различит од 0"}
+        ],
+        correct: [2],
+        explanation: "Оператор > има виши приоритет од ==. Прво се рачуна 10 > 5 што је тачно (1). Затим се рачуна 1 == 1, што је такође тачно (1)."
+    },
+    {
+        id: 9, type: "single",
+        text: "Имајући у виду приоритет оператора, одредити вредност променљиве x после извршења ове наредбе:",
+        code: `int x, a;\nscanf("%d", &a);\nx = 10 != 5 || a < 2;`,
+        options: [
+            {id: 1, text: "уколико се заградама не одредити редослед извршавања операција у овом изразу, долази до грешке, тј. „пуцања“ програма"},
+            {id: 2, text: "без обзира на вредност која се унесе у променљиву a, вредност израза је увек „тачно“, тј. x = 1"},
+            {id: 3, text: "без обзира на вредност која се унесе у променљиву a, вредност израза је увек „нетачно“, тј. x = 0"},
+            {id: 4, text: "вредност израза зависи од променљиве a и не може се једнозначно одредити уколико није позната вредност уписана у променљиву a"}
+        ],
+        correct: [2],
+        explanation: "Услов 10 != 5 је ТАЧАН (1). Пошто се користи логичко ИЛИ (||), уколико је први операнд тачан, израз је аутоматски тачан без провере другог операнда."
+    },
+    {
+        id: 10, type: "single",
+        text: "Проценити која од датих наредби врши проверу да ли је број паран или непаран:",
+        code: null,
+        options: [
+            {id: 1, text: "(broj % 2 == 1) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"},
+            {id: 2, text: "(broj % 2) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"},
+            {id: 3, text: "(broj % 2 == 0) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"},
+            {id: 4, text: "(broj & 1) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"},
+            {id: 5, text: "(broj & 0x1 == 0) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"},
+            {id: 6, text: "(broj & 1 == 1) ? printf(\"PARAN!!\") : printf(\"NEPARAN!!\");"}
+        ],
+        correct: [3],
+        explanation: "Остатак при дељењу са 2 за парне бројеве је увек 0 (broj % 2 == 0)."
+    },
+    {
+        id: 11, type: "single",
+        text: "Код дат у тексту задатка треба реализовати помоћу једне if наредбе:",
+        code: `if(x > 1)\n{\n    if(x < 6)\n        y = 4;\n}`,
+        options: [
+            {id: 1, text: "if(x > 1 && x < 6) y = 4;"},
+            {id: 2, text: "if(x > 1 || x < 6) y = 4;"},
+            {id: 3, text: "if(x < 1 || x > 6) y = 4;"},
+            {id: 4, text: "if(!(x <= 1 || x >= 6)) y = 4;"}
+        ],
+        correct: [1],
+        explanation: "Два угнежђена if услова без else грана су еквивалентна једном if услову са логичким И (&&)."
+    },
+    {
+        id: 12, type: "single",
+        text: "Свака for петља може се написати коришћењем while наредбе. Који код је еквивалентан коду датом у тексту задатка?",
+        code: `for(j = 0; j < n; j++)\n    if(a[j] > 0) s += a[j];\n    else break;`,
+        options: [
+            {id: 1, text: "j = 0; while(j < n && a[j] > 0) s += a[j++];"},
+            {id: 2, text: "j = 0; while(j < n && a[j++] > 0) s += a[j];"},
+            {id: 3, text: "j = 0; while(j < n || a[j] > 0) s += a[j++];"},
+            {id: 4, text: "j = 0; while(j < n && a[j] <= 0) s += a[j++];"}
+        ],
+        correct: [1],
+        explanation: "Петља се извршава док је j < n И a[j] > 0. Увећање бројача j (j++) се дешава након додавања у суму (s += a[j++])."
+    },
+    {
+        id: 13, type: "single",
+        text: "Одредити шта се налази као резултат у променљивој x и y након извршења датог кода:",
+        code: `unsigned a, b, x, y, temp;\nx = a * b;\nwhile(b) temp = a % b, a = b, b = temp;\ny = b;\nx /= y;`,
+        options: [
+            {id: 1, text: "x је производ а и б, а y је количник а са б"},
+            {id: 2, text: "x је најмањи заједнички садржалац за а и б, а y највећи заједнички делилац за а и б"},
+            {id: 3, text: "x је највећи заједнички делилац за а и б, а y најмањи заједнички садржалац за а и б"},
+            {id: 4, text: "без обзира на вредности променљивих, долази до грешке у последњој наредби кода"},
+            {id: 5, text: "долази до грешке јер петља понавља само прву наредбу услед изостанка витичастих заграда на телу петље"}
+        ],
+        correct: [4],
+        explanation: "Петља while(b) се извршава све док b није 0. Када се петља заврши, b је сигурно 0, па y постаје 0. Након тога x /= y изазива грешку (дељење нулом)."
+    },
+    {
+        id: 14, type: "single",
+        text: "Закључити шта представља вредност коју променљива br добије извршењем кода:",
+        code: `unsigned pod, br;\npod = 128;\nbr = 0;\nwhile(pod != 0){\n    if(pod & 0x1) br++;\n    pod >>= 0x1;\n}`,
+        options: [
+            {id: 1, text: "Број јединица у бинарном запису броја pod"},
+            {id: 2, text: "Број нула у бинарном запису броја pod"},
+            {id: 3, text: "Број цифара у бинарном запису броја pod"},
+            {id: 4, text: "Број цифара у хексадецималном запису броја pod"}
+        ],
+        correct: [1],
+        explanation: "Израз pod & 0x1 проверава да ли је последњи бит јединица. pod >>= 0x1 помера битове у десно. Тако се броје све јединице у бинарном запису."
+    },
+    {
+        id: 15, type: "single",
+        text: "Одредити вредности које променљива n може добити:",
+        code: `do{\n    printf("Unesite N:\\nN = ");\n    scanf("%d", &n);\n    if(n & 1) printf("Greska.\\n");\n}while(n & 1);`,
+        options: [
+            {id: 1, text: "Омогућава унос непарног природног броја"},
+            {id: 2, text: "Омогућава унос само позитивног природног броја"},
+            {id: 3, text: "Омогућава унос само негативног природног броја"},
+            {id: 4, text: "Омогућава унос парног природног броја"},
+            {id: 5, text: "Омогућава унос само непарног позитивног природног броја"}
+        ],
+        correct: [4],
+        explanation: "Услов (n & 1) је тачан ако је број непаран, па се петља понавља. Изаћи ће из петље тек када корисник унесе паран број."
+    },
+    {
+        id: 16, type: "single",
+        text: "Просудити на основу наредби које ће бити извршене у while циклусу како ће изгледати трансформисан низ x од n елемената:",
+        code: `int i, temp, n = 11;\nint x[30] = { -3, -1, -2, -2, 1, 4, 3, 1, 5, -8, 5 };\ntemp = x[0];\ni = 0;\nwhile(i < n - 1) x[i++] = x[i + 1];\nx[n - 1] = temp;`,
+        options: [
+            {id: 1, text: "x[ ] = { 5, -3, -1, -2, -2, 1, 4, 3, 1, 5, -8 }"},
+            {id: 2, text: "x[ ] = { -1, -2, -2, 1, 4, 3, 1, 5, -8, 5, -3 }"},
+            {id: 3, text: "x[ ] = { -2, 0, -1, -1, 2, 5, 4, 2, 6, -7, 6 }"},
+            {id: 4, text: "x[ ] = { -1, -2, -2, 1, 4, 3, 1, 5, -8, 5 }"}
+        ],
+        correct: [2],
+        explanation: "Овај код врши циклично померање свих елемената низа за једно место улево. Први елемент (-3) иде на крај."
+    },
+    {
+        id: 17, type: "single",
+        text: "На основу позива, проценити каквог је облика прототип функције и заокружити број испред тачно написаног прототипа:",
+        code: `int k, i;\nchar lista[10][50], ime[50];\nif( Formiraj(lista[i], ime, k) == NULL) { ... }`,
+        options: [
+            {id: 1, text: "void *Formiraj(char s1, char s2, int x);"},
+            {id: 2, text: "char Formiraj(char *s1, char *s2, int x);"},
+            {id: 3, text: "int *Formiraj(char s1[], char s2[], int x);"},
+            {id: 4, text: "int Formiraj(char s1[], char s2[], int x);"},
+            {id: 5, text: "char *Formiraj(char *s1, char *s2, int x);"}
+        ],
+        correct: [3],
+        explanation: "lista[i] и ime су низови карактера, a k је int. Функција се пореди са NULL, што значи да враћа показивач (нпр. int *). Опција 3 једина одговара, иако би и повратни тип char* (5) био логичан у пракси, изворни кључ сугерише 3 због 'int *Formiraj'."
+    },
+    {
+        id: 18, type: "single",
+        text: "На основу позива, проценити каквог је облика прототип функције:",
+        code: `int x, y, i, j;\nfloat **mat, *vek, z;\nmat[i] = Formiraj(x, 0.5);`,
+        options: [
+            {id: 1, text: "float Formiraj(int n, float m);"},
+            {id: 2, text: "void *Formiraj(int n, int m);"},
+            {id: 3, text: "float *Formiraj(float n, int m);"},
+            {id: 4, text: "float *Formiraj(int n, float m);"},
+            {id: 5, text: "float **Formiraj(int n, float m);"}
+        ],
+        correct: [4],
+        explanation: "mat[i] је показивач float*, па функција мора да врати float*. Аргументи су x (int) и 0.5 (float)."
+    },
+    {
+        id: 19, type: "single",
+        text: "Проценити шта ће се десити ако се функција позове наредбом: prikaz(4, 10);",
+        code: `void prikaz(int k, int n){\n    printf("%d\\t", k);\n    if(k < n) prikaz(k + 1, n);\n    printf("%d\\t", k);\n}`,
+        options: [
+            {id: 1, text: "4 5 6 7 8 9 10"},
+            {id: 2, text: "4 5 6 7 8 9 10 9 8 7 6 5 4"},
+            {id: 3, text: "4 5 6 7 8 9 10 10 9 8 7 6 5 4"},
+            {id: 4, text: "10 9 8 7 6 5 4"}
+        ],
+        correct: [3],
+        explanation: "Први printf исписује број пре уласка у рекурзију (растући редослед), а други printf исписује број при повратку из рекурзије (опадајући). Број 10 ће бити исписан два пута у средини (када k=10)."
+    },
+    {
+        id: 20, type: "single",
+        text: "Заокружити редни број испред исправно записаног позива декларисане функције:",
+        code: `void funkcija(int *x, int *y, int **p);\n\nvoid main(){\n    int a = 5, b = 7, c = 15, *poc;\n    poc = &c;\n}`,
+        options: [
+            {id: 1, text: "funkcija(a, b, &poc);"},
+            {id: 2, text: "funkcija(&a, &b, &poc);"},
+            {id: 3, text: "funkcija(&a, &b, poc);"},
+            {id: 4, text: "c = funkcija(&a, &b, &poc);"}
+        ],
+        correct: [2],
+        explanation: "Функција захтева два показивача на int (шаљемо &a и &b) и један показивач на показивач на int (шаљемо &poc)."
+    },
+    {
+        id: 21, type: "single",
+        text: "Заокружити број испред наредбе којом се број темена основе пирамиде на коју показује декларисани показивач *p, поставља на 6:",
+        code: `typedef struct { float x, y; } Tacka;\ntypedef struct { int brojTemena; Tacka temena[10]; } Poligon;\ntypedef struct { Poligon osnova; float visina; } Piramida;\n\nPiramida *p;`,
+        options: [
+            {id: 1, text: "p.osnova.brojTemena = 6;"},
+            {id: 2, text: "p.osnova->brojTemena = 6;"},
+            {id: 3, text: "p->osnova.brojTemena = 6;"},
+            {id: 4, text: "p->osnova[brojTemena] = 6;"},
+            {id: 5, text: "p->osnova->brojTemena = 6;"}
+        ],
+        correct: [3],
+        explanation: "Пошто је p показивач, користимо p-> за приступ структури osnova. Пошто је osnova обична структура, користимо тачку (.) да приступимо пољу brojTemena."
+    },
+    {
+        id: 22, type: "multi",
+        text: "Заокружити бројеве испред ТАЧНИХ исказa који се односе на дефиницију while циклуса (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "while циклус се извршава све док је услов логичка неистина (једнак нули)"},
+            {id: 2, text: "while циклус се користи када се зна колико ће се пута циклус извршавати"},
+            {id: 3, text: "у while циклусу се увек прво проверава да ли је услов логичка истина, те ако јесте наредба се извршава"},
+            {id: 4, text: "код while циклуса се може десити да се тело циклуса не изврши ниједном (на почетку услов није задовољен)"}
+        ],
+        correct: [3, 4],
+        explanation: "While циклус је петља са предусловом (прво проверава, па извршава), па ако услов на почетку није испуњен, тело се неће извршити ниједном."
+    },
+    {
+        id: 23, type: "multi",
+        text: "Наведени су искази који се односе на дефиницију do-while циклуса. Заокружити бројеве испред ТАЧНИХ исказа (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "Користи се када се не зна колико ће се пута циклус понављати"},
+            {id: 2, text: "Прво се извршава тело циклуса, а затим израчунава вредност логичког израза. Ако се добије логичка неистина, циклус се поновно извршава."},
+            {id: 3, text: "Циклус се завршава када услов добија вредност логичке истине"},
+            {id: 4, text: "Циклус се извршава барем једном."}
+        ],
+        correct: [1, 4],
+        explanation: "do-while се извршава док је услов ИСТИНИТ (а не неистинит, због чега је опција 2 нетачна). Тело се увек извршава барем једном."
+    },
+    {
+        id: 24, type: "multi",
+        text: "При покушају да датотеку отворимо за читање, функција fopen... (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "ако датотека не постоји, изазива грешку која доводи до пуцања програма"},
+            {id: 2, text: "ако датотека не постоји, креира празну датотеку, поставља се на њен почетак и враћа показивач на ту датотеку"},
+            {id: 3, text: "враћа NULL показивач ако датотека не постоји"},
+            {id: 4, text: "ако датотека постоји, враћа показивач на ту датотеку"}
+        ],
+        correct: [3, 4],
+        explanation: "Ако фајл за читање не постоји, fopen враћа NULL (не креира нови фајл нити руши програм)."
+    },
+    {
+        id: 25, type: "multi",
+        text: "Дате су наредбе декларације променљивих (са и без иницијализације вредности) написане на програмском језику Ц. Заокружити бројеве испред исправно написаних наредби декларације променљивих (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "int a = b = c = 5;"},
+            {id: 2, text: "int a = 5, b = 5, c = 5;"},
+            {id: 3, text: "char zn = \"a\";"},
+            {id: 4, text: "long a; b = 5; c;"},
+            {id: 5, text: "int a = 0xf2;"},
+            {id: 6, text: "char zn = '\\b';"}
+        ],
+        correct: [2, 5, 6],
+        explanation: "Опција 1 је неисправна јер b и c нису декларисани. Опција 3 користи дупле наводнике за char (треба једноструки). Опција 4 користи ; уместо , за набрајање."
+    },
+    {
+        id: 26, type: "multi",
+        text: "Заокружити бројеве испред НЕИСПРАВНО написаних наредби доделе вредности променљивама (Вишеструки избор):",
+        code: `float x, z;\nconst float y;`,
+        options: [
+            {id: 1, text: "x %= y;"},
+            {id: 2, text: "x =+ 5;"},
+            {id: 3, text: "x += y + 5;"},
+            {id: 4, text: "x =/ y + 5;"},
+            {id: 5, text: "y = x + z;"},
+            {id: 6, text: "x = z = y + 5;"}
+        ],
+        correct: [1, 4, 5],
+        explanation: "1: Модуло (%) не ради над float вредностима. 4: Оператор =/ не постоји (треба /=). 5: y је константа, не може јој се мењати вредност."
+    },
+    {
+        id: 27, type: "multi",
+        text: "Имајући у виду дату декларацију, заокружити бројеве испред НЕИСПРАВНО написаних наредби форматираног уноса података (Вишеструки избор):",
+        code: `int a, b;`,
+        options: [
+            {id: 1, text: "scanf(\"%d%f\", &a, &b);"},
+            {id: 2, text: "scanf(\"%d%*d\", &a, &b);"},
+            {id: 3, text: "scanf(\"%d%d\", &a, &b);"},
+            {id: 4, text: "scanf(\"%d%d\", a, b);"},
+            {id: 5, text: "scanf(\"%d%*d\", &a);"},
+            {id: 6, text: "scanf(\"%5d%5d\", &a, &b);"}
+        ],
+        correct: [1, 2, 4],
+        explanation: "1: b је int, а не float (%f). 2: %*d значи 'прочитај и игнориши', тако да scanf неће уписати другу вредност у b, што је логичка грешка (очекује се унос два броја у a и b). 4: недостаје оператор & испред a и b."
+    },
+    {
+        id: 28, type: "multi",
+        text: "Дате су наредбе декларације и иницијализације једнодимензионалног низа целих бројева. Заокружити бројеве испред исправно написаних наредби (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "int a[10] = {1, 2, 3};"},
+            {id: 2, text: "int a[5] = {-3, -2, -1, 0, 1, 2, 3};"},
+            {id: 3, text: "int a[] = {10, 20, 30, 40, 50};"},
+            {id: 4, text: "int[5] a = {1, 2, 3, 4, 5};"},
+            {id: 5, text: "int a = {10, 20, 30, 40, 50};"},
+            {id: 6, text: "int a[5] = {'1', '2', '3', '4', '5'};"}
+        ],
+        correct: [1, 3, 6],
+        explanation: "2: има превише елемената (7 за низ од 5). 4: тип int[5] није валидна C синтакса. 5: фале угласте заграде a[]."
+    },
+    {
+        id: 29, type: "multi",
+        text: "Анализирати дате исказе који дефинишу дозвољене аритметичке операције над показивачима. Заокружити бројеве испред тачних исказа (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "Додела вредности једног показивача другом."},
+            {id: 2, text: "Додавање рационалног податка на вредност показивача и одузимање рационалног податка од вредности показивача."},
+            {id: 3, text: "Одузимање и упоређивање два показивача."},
+            {id: 4, text: "Идентификатор низа је показивач на почетак низа и може му се мењати вредност."},
+            {id: 5, text: "Упоређивање показивача са NULL."},
+            {id: 6, text: "Сабирањем два показивача, добија се нови показивач."}
+        ],
+        correct: [1, 3, 5],
+        explanation: "2: Показивачима се може додати само цео број (int), а не рационалан. 4: Идентификатор низа је константни показивач и не може му се мењати вредност. 6: Сабирање два показивача није дефинисано."
+    },
+    {
+        id: 30, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних наредби декларације дводимензионалног низа целих бројева (матрице) (Вишеструки избор):",
+        code: `#define k 50\n// …\nint m = 100;\n// …`,
+        options: [
+            {id: 1, text: "int a[k][k];"},
+            {id: 2, text: "int b[k][m];"},
+            {id: 3, text: "int c[k][10];"},
+            {id: 4, text: "int x[100][50];"},
+            {id: 5, text: "int y[10, 10];"},
+            {id: 6, text: "int z[m][10];"}
+        ],
+        correct: [1, 3, 4],
+        explanation: "У стандардном Ц језику, димензије низова морају бити константе или макрои (#define). m је променљива, па декларације са m нису дозвољене (2, 6). Опција 5 користи зарез [10, 10] уместо два пара заграда."
+    },
+    {
+        id: 31, type: "multi",
+        text: "Проценити који изрази дају тачно решење за претварање температуре у Целзијусима у Фаренхајте (Подаци су float) (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "temf = (9 / 5) * temc + 32;"},
+            {id: 2, text: "temf = 9 / 5 * temc + 32;"},
+            {id: 3, text: "temf = 9 * temc / 5 + 32;"},
+            {id: 4, text: "temf = 32 + 9 * temc / 5;"}
+        ],
+        correct: [3, 4],
+        explanation: "Изрази (9/5) и 9/5 врше целобројно дељење, па дају резултат 1 уместо 1.8. Множење са temc ПРЕ дељења са 5 спречава целобројно скраћивање."
+    },
+    {
+        id: 32, type: "multi",
+        text: "Заокружити бројеве испред понуђених switch наредби које су еквивалентне датој if-else наредби (Вишеструки избор):",
+        code: `if(a == 3 || a == 5) p++;\nelse p--;`,
+        options: [
+            {id: 1, text: "switch(a){\n    case 3: p++; break;\n    case 5: p++; break;\n    default: p--;\n}"},
+            {id: 2, text: "switch(a){\n    case 3: case 5: p++; break;\n    p--;\n}"},
+            {id: 3, text: "switch(a){\n    case 3: case 5: p++; break;\n    default: p--;\n}"},
+            {id: 4, text: "switch(a){\n    case 3: case 5: p++;\n    default: p--;\n}"}
+        ],
+        correct: [1, 3],
+        explanation: "Опције 1 и 3 су исправне. Опција 2 нема 'default:' кључну реч, а опцији 4 фали 'break', па ће се након p++ извршити и p--."
+    },
+    {
+        id: 33, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних наредби за ПРИКАЗ i-тог елемента низа B (Вишеструки избор):",
+        code: `float *B;\nint n;\nB = (float*)calloc(n, sizeof(float));`,
+        options: [
+            {id: 1, text: "printf(\"%f\", B[i]);"},
+            {id: 2, text: "printf(\"%f\", &B[i]);"},
+            {id: 3, text: "printf(\"%f\", B+i);"},
+            {id: 4, text: "printf(\"%p\", *(B+i));"},
+            {id: 5, text: "printf(\"%f\", *(B+i));"}
+        ],
+        correct: [1, 5],
+        explanation: "За приказ вредности (float) користимо или синтаксу низа B[i] или дереференцирање показивача *(B+i). Остале опције приказују адресе."
+    },
+    {
+        id: 34, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних наредби за УНОС i-тог елемента низа B (Вишеструки избор):",
+        code: `float *B;\nint n;\nB = (float*)calloc(n, sizeof(float));`,
+        options: [
+            {id: 1, text: "scanf(\"%f\", B[i]);"},
+            {id: 2, text: "scanf(\"%f\", B+i);"},
+            {id: 3, text: "scanf(\"%p\", B+i);"},
+            {id: 4, text: "scanf(\"%f\", &B[i]);"},
+            {id: 5, text: "scanf(\"%f\", *(B+i));"}
+        ],
+        correct: [2, 4],
+        explanation: "Функција scanf захтева АДРЕСУ на коју ће уписати податак. Адреса i-тог елемента је &B[i] или B+i."
+    },
+    {
+        id: 35, type: "multi",
+        text: "Дати су прототипови функција написани у програмском језику Ц. Заокружити бројеве испред исправно написаних прототипова функција (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "float* pp1(int a, int b, int c);"},
+            {id: 2, text: "int pp2(int a[][10], int n);"},
+            {id: 3, text: "int pp3(int a[], n; float b);"},
+            {id: 4, text: "void pp4(int *a, int n);"},
+            {id: 5, text: "int pp5(int a[][], int n);"},
+            {id: 6, text: "int pp6(int a[], int n);"},
+            {id: 7, text: "int pp7(int a, b, c);"},
+            {id: 8, text: "float[] pp8(float a[], int n);"}
+        ],
+        correct: [1, 2, 4, 6],
+        explanation: "3: Има тачка-зарез уместо зареза. 5: За матрицу мора бити наведена друга димензија. 7: Типови за b и c нису наведени. 8: Повратни тип float[] није дозвољен у C."
+    },
+    {
+        id: 36, type: "multi",
+        text: "При покушају да датотеку отворимо за писање, функција fopen... (Вишеструки избор):",
+        code: null,
+        options: [
+            {id: 1, text: "ако датотека не постоји, креира празну датотеку, поставља се на њен почетак и враћа показивач на ту датотеку"},
+            {id: 2, text: "враћа NULL показивач ако датотека не постоји"},
+            {id: 3, text: "ако датотека постоји, излази упозорење да ће њен садржај бити уништен при отварању"},
+            {id: 4, text: "ако датотека не постоји, изазива грешку која доводи до пуцања програма"},
+            {id: 5, text: "ако датотека постоји, уништава њен садржај без упозорења"}
+        ],
+        correct: [1, 5],
+        explanation: "Режим 'w' креира нову датотеку ако не постоји, а ако постоји, преписује преко ње (брише све постојеће податке) без икаквог упозорења."
+    },
+    {
+        id: 37, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних наредби читања низа целих бројева дужине 10 из бинарног фајла на који показује показивач *in (Вишеструки избор):",
+        code: `int niz[10];`,
+        options: [
+            {id: 1, text: "fread(niz, sizeof(int), 10, in);"},
+            {id: 2, text: "fread(&niz, sizeof(int), 10, in);"},
+            {id: 3, text: "fread(&niz, sizeof niz, 1, in);"},
+            {id: 4, text: "fread(niz, sizeof niz, 1, in);"},
+            {id: 5, text: "fread(niz, sizeof(niz), 1, *in);"},
+            {id: 6, text: "fread(niz, sizeof(int)*10, in);"}
+        ],
+        correct: [1, 4],
+        explanation: "Име низа (niz) је већ показивач на његов почетак, тако да & није потребан. Може се читати 10 блокова величине int (1), или 1 блок величине целог низа (4)."
+    },
+    {
+        id: 38, type: "multi",
+        text: "Заокруживањем обележити исправне начине приступа пољима структурне променљиве x (Вишеструки избор):",
+        code: `typedef struct\n{\n    char ime[50];\n    int razred;\n    int ocene[10];\n} Ucenik;\n\nint i;\nUcenik x;`,
+        options: [
+            {id: 1, text: "x.ocene[i]"},
+            {id: 2, text: "*x.razred"},
+            {id: 3, text: "x->ime"},
+            {id: 4, text: "x[i].ocene"},
+            {id: 5, text: "x.ime"}
+        ],
+        correct: [1, 5],
+        explanation: "x је обична променљива (није показивач, нити низ), па се пољима приступа преко тачке (x.ime, x.ocene[i])."
+    },
+    {
+        id: 39, type: "multi",
+        text: "Заокруживањем обележити исправне начине приступа пољима структурне променљиве (Вишеструки избор):",
+        code: `typedef struct\n{\n    char start[50], cilj[50];\n    int kilometraza;\n} Putovanje;\n\nPutovanje *p;`,
+        options: [
+            {id: 1, text: "*p->kilometraza"},
+            {id: 2, text: "(*p).kilometraza"},
+            {id: 3, text: "&p->kilometraza"},
+            {id: 4, text: "p->start"},
+            {id: 5, text: "*(p).start"}
+        ],
+        correct: [2, 4],
+        explanation: "Пошто је p показивач, користимо оператор -> (p->start) или дереференцирамо цео објекат у заградама и користимо тачку ((*p).kilometraza)."
+    },
+    {
+        id: 40, type: "multi",
+        text: "Заокружити бројеве испред исправно написаних позива декларисане функције (Вишеструки избор):",
+        code: `void Saberi(int n, int *a, int *b);\n\nint x[50][50], y[50], m, j, i;`,
+        options: [
+            {id: 1, text: "Saberi(m, y[i], y[i+1]);"},
+            {id: 2, text: "Saberi(y[i], x[i], x[i+1]);"},
+            {id: 3, text: "Saberi(m, y, x[i][j]);"},
+            {id: 4, text: "Saberi(y, x[i], x[i+1]);"},
+            {id: 5, text: "Saberi(10, y, x[0]);"},
+            {id: 6, text: "Saberi(x[i][j], x[i], x[j]);"}
+        ],
+        correct: [2, 5, 6],
+        explanation: "Функција захтева (int, int*, int*). y[i] и x[i][j] су int вредности. x[i], x[j], и y су адресе/показивачи на int низове. Опције 2, 5 и 6 задовољавају ове типове."
+    }
+];
+
+    let currentQuestionIndex = 0;
+    let mistakes = [];
+
+    // Елементи
+    const app = document.getElementById('app');
+        function escapeHTML(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+}
+    function init() {
+        // Учитавање претходних грешака ако постоје
+        const savedMistakes = localStorage.getItem('c_quiz_mistakes');
+        if (savedMistakes) {
+            mistakes = JSON.parse(savedMistakes);
+        }
+        
+        // Учитавање тренутног питања
+        const savedIndex = localStorage.getItem('c_quiz_current_index');
+        if (savedIndex !== null) {
+            currentQuestionIndex = parseInt(savedIndex, 10);
+        }
+
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentQuestionIndex];
+        const isMulti = q.type === "multi";
+
+        let html = `
+            <div class="progress">Питање ${currentQuestionIndex + 1} од ${questions.length}</div>
+            <h2>${escapeHTML(q.text)}</h2>
+${q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : ''}
+            <div class="options">
+        `;
+
+        q.options.forEach(opt => {
+            html += `
+                <label class="option-label">
+                    <input type="${isMulti ? 'checkbox' : 'radio'}" name="answer" value="${opt.id}">
+${escapeHTML(opt.text)}
+                </label>
+            `;
+        });
+
+        html += `
+            </div>
+            <button id="submitBtn" onclick="checkAnswer()">Потврди одговор</button>
+            <div id="feedbackBox" class="feedback"></div>
+            <button id="nextBtn" class="hidden" onclick="nextQuestion()">Следеће питање</button>
+        `;
+
+        app.innerHTML = html;
+    }
+
+    function checkAnswer() {
+        const q = questions[currentQuestionIndex];
+        const selected = Array.from(document.querySelectorAll('input[name="answer"]:checked'))
+                              .map(cb => parseInt(cb.value))
+                              .sort();
+
+        if (selected.length === 0) {
+            alert('Молимо вас изаберите одговор.');
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const feedbackBox = document.getElementById('feedbackBox');
+        
+        // Онемогући дугме за слање и све инпуте
+        submitBtn.disabled = true;
+        document.querySelectorAll('input[name="answer"]').forEach(i => i.disabled = true);
+
+        const isCorrect = arraysEqual(selected, q.correct.sort());
+
+        if (isCorrect) {
+            feedbackBox.className = 'feedback correct';
+            feedbackBox.innerHTML = `<strong>Тачно!</strong> ${escapeHTML(q.explanation)}`;
+        } else {
+            feedbackBox.className = 'feedback incorrect';
+            feedbackBox.innerHTML = `<strong>Нетачно!</strong> ${escapeHTML(q.explanation)}`;
+            // Забележи грешку
+            mistakes.push({
+                questionNumber: currentQuestionIndex + 1,
+                text: q.text,
+                explanation: q.explanation
+            });
+            localStorage.setItem('c_quiz_mistakes', JSON.stringify(mistakes));
+        }
+
+        nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            localStorage.setItem('c_quiz_current_index', currentQuestionIndex); // Чувамо тренутно питање
+            renderQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        let html = `<h2>Резултати теста</h2>`;
+        
+        if (mistakes.length === 0) {
+            html += `<p style="color: green; font-weight:bold;">Свака част! Немате ниједну грешку!</p>`;
+        } else {
+            html += `<p>Направили сте грешке у следећим задацима. Проучите објашњења како бисте утврдили градиво:</p>`;
+            
+            mistakes.forEach(m => {
+                html += `
+                    <div class="mistake-card">
+                        <strong>Питање ${m.questionNumber}:</strong> ${escapeHTML(m.text)}
+                        <div style="margin-top: 10px; color: #555;"><strong>Објашњење:</strong> ${escapeHTML(m.explanation)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        html += `<button onclick="restartTest()">Покушај поново (Брише историју грешака)</button>`;
+        app.innerHTML = html;
+    }
+
+    function restartTest() {
+        localStorage.removeItem('c_quiz_mistakes');
+        localStorage.removeItem('c_quiz_current_index'); // Бришемо запамћено питање
+        mistakes = [];
+        currentQuestionIndex = 0;
+        init();
+    }
+
+    function arraysEqual(a, b) {
+        if (a.length !== b.length) return false;
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) return false;
+        }
+        return true;
+    }
+
+    // Покрени апликацију
+    init();
+
+</script>
+
+</body>
+</html>
